@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class SpotifyServices {
     static final String spotifyAccountURL = "https://accounts.spotify.com";
-    static final String redirectURL = "http://localhost:3000/";
+    static final String redirectURL = "https://aqueous-brushlands-34349.herokuapp.com//";
 
     public static String getTokens(String code, String encodedData) throws IOException, InterruptedException {
         String uri = spotifyAccountURL + "/api/token/";
