@@ -11,7 +11,7 @@ import java.util.Base64;
 //change origins later!
 @RestController
 //change to heroku link
-@CrossOrigin(origins = "https://aqueous-brushlands-34349.herokuapp.com/")
+@CrossOrigin(origins = "https://immense-temple-17196.herokuapp.com ")
 public class SpotifyAuthController {
     private String clientId;
     private String clientSecret;
