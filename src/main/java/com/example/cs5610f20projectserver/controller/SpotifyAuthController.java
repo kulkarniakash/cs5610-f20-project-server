@@ -132,6 +132,14 @@ public class SpotifyAuthController {
 
     @GetMapping("/posts")
     public List<Post> getAllPosts() {
+        List<Post> posts = postRepoService.getAllPosts();
+        List<Follower> emptyFollower = new ArrayList<>();
+        List<Post> emptyPosts = new ArrayList<>();
+        for(Post post : posts) {
+            post.getUser().setFollowees(emptyFollower);
+            post.getUser().setFollowers(emptyFollower);
+            post.getUser().setPosts(emptyPosts);
+        }
         return postRepoService.getAllPosts();
     }
 
