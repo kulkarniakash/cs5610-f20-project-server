@@ -5,6 +5,8 @@ import com.example.cs5610f20projectserver.repositories.UserRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public class UserRepoService {
 
     private UserRepository repository;
@@ -22,9 +24,13 @@ public class UserRepoService {
         return this.repository.save(user);
     }
 
+    public User updateUser(User user) {
+        return this.repository.save(user);
+    }
+
     public String findUserByUsername(String username) {
         return this.repository.findUserByUsername(username);
     }
 
-    public String findUserBySpotifyId(String uid) {return this.repository.findUserBySpotifyId(uid);}
+    public User findUserBySpotifyId(String uid) {return this.repository.findUserBySpotifyId(uid);}
 }

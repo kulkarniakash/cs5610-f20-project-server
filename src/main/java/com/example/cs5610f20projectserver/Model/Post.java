@@ -9,16 +9,27 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String author_id;
+    private Integer id;
+    // private String author_id;
     private String post;
     private Date post_date;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Post() {
 
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -26,13 +37,13 @@ public class Post {
         this.id = id;
     }
 
-    public String getAuthor_id() {
+    /*public String getAuthor_id() {
         return author_id;
-    }
+    }*/
 
-    public void setAuthor_id(String author_id) {
+    /*public void setAuthor_id(String author_id) {
         this.author_id = author_id;
-    }
+    }*/
 
     public String getPost() {
         return post;
@@ -52,7 +63,7 @@ public class Post {
 
     public Post(int id, String author_id, String post, Date post_date) {
         this.id = id;
-        this.author_id = author_id;
+        // this.author_id = author_id;
         this.post = post;
         this.post_date = post_date;
     }

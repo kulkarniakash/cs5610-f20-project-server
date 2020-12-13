@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface PostRepository extends CrudRepository<Post, String> {
+public interface PostRepository extends CrudRepository<Post, Integer> {
 
 }
