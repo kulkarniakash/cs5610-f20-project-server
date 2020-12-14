@@ -28,4 +28,14 @@ public class PostRepoService {
     public List<Post> getAllPosts() {
         return (List<Post>) repository.findAll();
     }
+
+    public Post getPostById(Integer id) { return repository.findPostById(id);}
+
+    public void deletePostById(Integer id) {
+        repository.deleteById(id);
+    }
+
+    public void updatePostById(Integer id, Post newPost) {
+        repository.save(newPost);
+    }
 }

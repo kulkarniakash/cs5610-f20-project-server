@@ -25,16 +25,16 @@ public class Follower {
         this.follower = follower;
     }
 
-    public String getFollowee() {
-        return followee.getId();
+    public User getFollowee() {
+        return followee;
     }
 
     public void setFollowee(User followee) {
         this.followee = followee;
     }
 
-    public String getFollower() {
-        return follower.getId();
+    public User getFollower() {
+        return follower;
     }
 
     public void setFollower(User follower) {

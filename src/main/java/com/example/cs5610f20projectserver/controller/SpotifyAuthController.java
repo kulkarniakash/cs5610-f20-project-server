@@ -226,4 +226,141 @@ public class SpotifyAuthController {
         return jsonResp.toString();
     }
 
+    @GetMapping("/user_list")
+    public String getUserList(@RequestParam("username") String usernameSearch) throws JSONException {
+        List<User> allUsers = userRepoService.findAllUsers();
+        List<User> requiredUsers = new ArrayList<>();
+        List<Follower> emptyFolower = new ArrayList<>();
+        List<Post> emptyPost = new ArrayList<>();
+
+        if(usernameSearch == null) {
+            usernameSearch = "";
+        }
+
+        for(User user : allUsers) {
+            if(user.getUsername().toLowerCase().contains(usernameSearch.toLowerCase())) {
+                user.setPosts(emptyPost);
+                user.setFollowers(emptyFolower);
+                user.setFollowees(emptyFolower);
+                requiredUsers.add(user);
+            }
+        }
+
+        JSONObject jsonResp = new JSONObject("{}");
+        jsonResp.put("users", requiredUsers);
+        return jsonResp.toString();
+    }
+
+    @GetMapping("/user")
+    public String getUserById(@RequestParam("uid") String uid) throws JSONException {
+        if(userRepoService.findUserBySpotifyId(uid) == null) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "user does not exist");
+            return jsonResp.toString();
+        }
+
+        User user = userRepoService.findUserBySpotifyId(uid);
+        List<Follower> emptyFollower = new ArrayList<>();
+        List<Post> emptyPost = new ArrayList<>();
+        User emptyUser = new User();
+
+        for(Follower f : user.getFollowees()) {
+            f.setFollower(emptyUser);
+            f.getFollowee().setPosts(emptyPost);
+            f.getFollowee().setFollowers(emptyFollower);
+            f.getFollowee().setFollowees(emptyFollower);
+        }
+
+        for(Follower f : user.getFollowers()) {
+            f.setFollowee(emptyUser);
+            f.getFollower().setPosts(emptyPost);
+            f.getFollower().setFollowers(emptyFollower);
+            f.getFollower().setFollowees(emptyFollower);
+        }
+
+        for(Post post : user.getPosts()) {
+            post.setUser(emptyUser);
+        }
+
+
+        JSONObject jsonResp = new JSONObject(user);
+        return jsonResp.toString();
+    }
+
+    @GetMapping("/search_posts")
+    public String searchPosts(@RequestParam("keywords") String keywords) throws JSONException {
+        String[] tokens = keywords.split(" ");
+        List<Post> allPosts = postRepoService.getAllPosts();
+        List<Post> requiredPosts = new ArrayList<>();
+
+        List<Follower> emptyFollower = new ArrayList<>();
+        List<Post> emptyPost = new ArrayList<>();
+
+        for(Post post : allPosts) {
+            for(String token : tokens) {
+                if(post.getPost().toLowerCase().contains(token.toLowerCase())) {
+                    post.getUser().setFollowers(emptyFollower);
+                    post.getUser().setFollowees(emptyFollower);
+                    post.getUser().setPosts(emptyPost);
+
+                    requiredPosts.add(post);
+                    break;
+                }
+            }
+        }
+
+        JSONObject jsonResp = new JSONObject("{}");
+        jsonResp.put("posts", requiredPosts);
+        return jsonResp.toString();
+    }
+
+    @DeleteMapping("/delete_post/{postid}")
+    public String deletePost(@PathVariable("postid") Integer postId, @RequestParam("access_token") String accessToken) throws IOException, InterruptedException, JSONException {
+        String userObject = SpotifyServices.getUserProfile(accessToken);
+        JSONObject jsonObjectUserId = new JSONObject(userObject);
+
+        if (!userRepoService.findUserBySpotifyId(jsonObjectUserId.getString("id")).isIs_admin()) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "you don't have permission to delete posts");
+            return jsonResp.toString();
+        }
+
+        if (postRepoService.getPostById(postId) == null) {
+
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "post does not exist");
+            return jsonResp.toString();
+        }
+
+        postRepoService.deletePostById(postId);
+        JSONObject jsonResp = new JSONObject("{}");
+        jsonResp.put("success", "post deleted");
+        return jsonResp.toString();
+    }
+
+    @PutMapping("/update_post/{postId}")
+    public String updatePost(@RequestParam("access_token") String accessToken, @PathVariable("postId") Integer postId, @RequestBody Post post) throws IOException, InterruptedException, JSONException {
+        String userObject = SpotifyServices.getUserProfile(accessToken);
+        JSONObject jsonObjectUserId = new JSONObject(userObject);
+
+        if(postRepoService.getPostById(postId) == null) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "post does not exist");
+            return jsonResp.toString();
+        }
+
+        if(!jsonObjectUserId.getString("id").equals(postRepoService.getPostById(postId).getUser().getId())) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "user not authorized to update post");
+            return jsonResp.toString();
+        }
+
+        postRepoService.updatePostById(postId, post);
+
+        JSONObject jsonResp = new JSONObject("{}");
+        jsonResp.put("success", "post updated");
+        return jsonResp.toString();
+
+    }
+
 }

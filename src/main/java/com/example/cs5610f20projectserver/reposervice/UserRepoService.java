@@ -33,4 +33,8 @@ public class UserRepoService {
     }
 
     public User findUserBySpotifyId(String uid) {return this.repository.findUserBySpotifyId(uid);}
+
+    public List<User> findAllUsers() {
+        return (List<User>) this.repository.findAll();
+    }
 }

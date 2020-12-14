@@ -31,10 +31,10 @@ public class User {
 
     }
 
-    @JsonIgnore
+    /*@JsonIgnore
     public String toString() {
         return "id = " + id + "\nusername = " + username;
-    }
+    }*/
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
