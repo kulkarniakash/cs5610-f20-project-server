@@ -319,16 +319,17 @@ public class SpotifyAuthController {
         String userObject = SpotifyServices.getUserProfile(accessToken);
         JSONObject jsonObjectUserId = new JSONObject(userObject);
 
-        if (!userRepoService.findUserBySpotifyId(jsonObjectUserId.getString("id")).isIs_admin()) {
-            JSONObject jsonResp = new JSONObject("{}");
-            jsonResp.put("error", "you don't have permission to delete posts");
-            return jsonResp.toString();
-        }
-
         if (postRepoService.getPostById(postId) == null) {
 
             JSONObject jsonResp = new JSONObject("{}");
             jsonResp.put("error", "post does not exist");
+            return jsonResp.toString();
+        }
+
+        if (!userRepoService.findUserBySpotifyId(jsonObjectUserId.getString("id")).isIs_admin() &&
+                !jsonObjectUserId.getString("id").equals(postRepoService.getPostById(postId).getUser().getId())) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "you don't have permission to delete posts");
             return jsonResp.toString();
         }
 
