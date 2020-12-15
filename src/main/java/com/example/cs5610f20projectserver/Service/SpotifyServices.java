@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class SpotifyServices {
     static final String spotifyAccountURL = "https://accounts.spotify.com";
-    static final String redirectURL = "http://localhost:3000/";
+    static final String redirectURL = "https://immense-temple-17196.herokuapp.com/";
     static final String spotify_web_api_url = "https://api.spotify.com";
     // static final String redirectURL = "https://immense-temple-17196.herokuapp.com/";
 
