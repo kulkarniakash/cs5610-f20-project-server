@@ -108,6 +108,12 @@ public class SpotifyAuthController {
         String userObject = SpotifyServices.getUserProfile(accessToken);
         JSONObject jsonObjectUserId = new JSONObject(userObject);
 
+        if(post.getPost() == null || post.getPost().equals("")) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "cannot create empty post");
+            return jsonResp.toString();
+        }
+
         if(jsonObjectUserId.has("error") || userRepoService.findUserBySpotifyId(jsonObjectUserId.getString("id")) == null ||
         !jsonObjectUserId.getString("id").equals(authorId)) {
             JSONObject jsonResp = new JSONObject("{}");
@@ -362,6 +368,36 @@ public class SpotifyAuthController {
         jsonResp.put("success", "post updated");
         return jsonResp.toString();
 
+    }
+
+    @PutMapping("/edit_user_profile")
+    public String editUser(@RequestBody User user, @RequestParam("access_token") String accessToken) throws IOException, InterruptedException, JSONException {
+        String userObject = SpotifyServices.getUserProfile(accessToken);
+        JSONObject jsonObjectUserId = new JSONObject(userObject);
+
+        if(userObject == null || user == null) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "incorrect access token");
+            return jsonResp.toString();
+        }
+
+        if(userRepoService.findUserBySpotifyId(user.getId()) == null) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "user is not registered");
+            return jsonResp.toString();
+        }
+
+        if(!jsonObjectUserId.getString("id").equals(user.getId())) {
+            JSONObject jsonResp = new JSONObject("{}");
+            jsonResp.put("error", "user does not have authorization to edit");
+            return jsonResp.toString();
+        }
+
+        userRepoService.updateUser(user);
+
+        JSONObject jsonResp = new JSONObject("{}");
+        jsonResp.put("success", "user info successfully updated");
+        return jsonResp.toString();
     }
 
 }
