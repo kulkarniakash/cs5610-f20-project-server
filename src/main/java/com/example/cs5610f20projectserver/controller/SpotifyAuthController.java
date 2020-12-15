@@ -370,6 +370,7 @@ public class SpotifyAuthController {
 
     }
 
+
     @PutMapping("/edit_user_profile")
     public String editUser(@RequestBody User user, @RequestParam("access_token") String accessToken) throws IOException, InterruptedException, JSONException {
         String userObject = SpotifyServices.getUserProfile(accessToken);
@@ -393,7 +394,12 @@ public class SpotifyAuthController {
             return jsonResp.toString();
         }
 
-        userRepoService.updateUser(user);
+        User updatedUser = userRepoService.findUserBySpotifyId(user.getId());
+        updatedUser.setUsername(user.getUsername());
+        updatedUser.setFirst_name(user.getFirst_name());
+        updatedUser.setLast_name(user.getLast_name());
+
+        userRepoService.updateUser(updatedUser);
 
         JSONObject jsonResp = new JSONObject("{}");
         jsonResp.put("success", "user info successfully updated");
